@@ -1,0 +1,58 @@
+{
+  "name": "bber-ispeak",
+  "version": "1.4.6",
+  "description": "bber-ispeak前端展示",
+  "main": "dist/ispeak-dao.min.js",
+  "dependencies": {
+    "@cloudbase/js-sdk": "^1.4.1",
+    "axios": "^0.21.1",
+    "marked": "^2.0.0",
+    "timeago.js": "^4.0.2",
+    "vue": "^2.6.12"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.12.13",
+    "@babel/core": "^7.12.13",
+    "@babel/plugin-transform-modules-commonjs": "^7.12.13",
+    "@babel/plugin-transform-runtime": "^7.12.15",
+    "@babel/preset-env": "^7.12.13",
+    "@babel/runtime": "^7.12.13",
+    "@webpack-cli/serve": "^1.3.0",
+    "babel-loader": "^8.2.2",
+    "copy-webpack-plugin": "^7.0.0",
+    "cross-env": "^7.0.3",
+    "css-loader": "^3.6.0",
+    "eslint": "^7.19.0",
+    "eslint-config-standard": "^16.0.2",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.1.0",
+    "eslint-plugin-vue": "^7.5.0",
+    "svg-inline-loader": "^0.8.2",
+    "terser-webpack-plugin": "^5.1.1",
+    "vue-loader": "^15.9.6",
+    "vue-template-compiler": "^2.6.12",
+    "webpack": "^5.21.2",
+    "webpack-bundle-analyzer": "^4.4.0",
+    "webpack-cli": "^4.5.0",
+    "webpack-dev-server": "^4.0.0-beta.0"
+  },
+  "homepage": "https://guole.fun/bb/",
+  "scripts": {
+    "dev": "webpack serve --mode development",
+    "serve": "webpack serve --mode development",
+    "build": "webpack --mode production",
+    "analyze": "webpack --profile --json > stats.json && webpack-bundle-analyzer stats.json",
+    "lint": "eslint src/** --ignore-path .eslintignore"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/kuole-o/bber-ispeak.git"
+  },
+  "author": "guole",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/kuole-o/bber-ispeak/issues"
+  }
+}

@@ -127,7 +127,6 @@ export default {
       loadingImg = "https://blog-img-1258635493.cos.ap-chengdu.myqcloud.com/cdn/img/loader/dogloading.gif",
       useLoadingImg = true,
     } = Vue.prototype.$speakData;
-    console.log("Vue.prototype.$speakData: ", Vue.prototype.$speakData);
     this.name = name;
     this.envId = envId;
     this.avatar = avatar;
@@ -137,7 +136,6 @@ export default {
     this.limit = Number(limit);
     this.loadingImg = loadingImg;
     this.useLoadingImg = Boolean(useLoadingImg);
-    console.log("this.useLoadingImg: ", this.useLoadingImg);
     const app = cloudbase.init({
       env: this.envId,
       region: this.region,

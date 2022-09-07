@@ -1,14 +1,15 @@
 {
-  "name": "bber-ispeak",
-  "version": "1.4.6",
-  "description": "bber-ispeak前端展示",
-  "main": "dist/ispeak-dao.min.js",
+  "name": "qexo-daodao",
+  "version": "0.0.1",
+  "description": "基于Qexo的叨叨展示",
+  "main": "dist/qexo-daodao.min.js",
   "dependencies": {
     "@cloudbase/js-sdk": "^1.4.1",
-    "axios": "^0.21.1",
+    "axios": "^0.21.4",
     "marked": "^2.0.0",
     "timeago.js": "^4.0.2",
-    "vue": "^2.6.12"
+    "vue": "^2.6.12",
+    "vue-toastification": "^1.7.14"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.13",

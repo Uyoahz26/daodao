@@ -1,7 +1,7 @@
 <template>
   <div id="ispeak" class="ispeak">
     <xk-issue />
-    <xk-footer />
+    <!-- <xk-footer /> -->
   </div>
 </template>
 

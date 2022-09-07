@@ -26,6 +26,9 @@
         </svg>
         <span class="xk-card-time" :title="time_title">{{ date }}</span>
       </div>
+      <div class="dao-label" v-if="label">
+        #{{ label }}
+      </div>
     </div>
     <div class="xk-card-content" v-html="content"></div>
     <div class="xk-card-footer">
@@ -33,10 +36,23 @@
         :style="'background: ' + fromColor + ';color:' + 'white'"
         class="xk-card-label"
       >
-        {{ from }}
+        {{ from || "Chrome牛逼器" }}
       </div>
-      <div class="dao-label">
-        {{ label }}
+      <div class="dao-like">
+
+        <template v-if="liked">
+          <svg class="like-svg" @click="handleLike" style="margin-right: 2px" xmlns="http://www.w3.org/2000/svg" height="16" width="16" fill="red">
+            <path transform="scale(0.03,0.03)" d="M0 190.9V185.1C0 115.2 50.52 55.58 119.4 44.1C164.1 36.51 211.4 51.37 244 84.02L256 96L267.1 84.02C300.6 51.37 347 36.51 392.6 44.1C461.5 55.58 512 115.2 512 185.1V190.9C512 232.4 494.8 272.1 464.4 300.4L283.7 469.1C276.2 476.1 266.3 480 256 480C245.7 480 235.8 476.1 228.3 469.1L47.59 300.4C17.23 272.1 .0003 232.4 .0003 190.9L0 190.9z" />
+          </svg>
+          {{ like }}
+        </template>
+        <template v-else>
+          <svg class="like-svg" @click="handleLike" xmlns="http://www.w3.org/2000/svg" height="16" width="16">
+            <path transform="scale(0.03,0.03)" d="M244 84L255.1 96L267.1 84.02C300.6 51.37 347 36.51 392.6 44.1C461.5 55.58 512 115.2 512 185.1V190.9C512 232.4 494.8 272.1 464.4 300.4L283.7 469.1C276.2 476.1 266.3 480 256 480C245.7 480 235.8 476.1 228.3 469.1L47.59 300.4C17.23 272.1 0 232.4 0 190.9V185.1C0 115.2 50.52 55.58 119.4 44.1C164.1 36.51 211.4 51.37 244 84C243.1 84 244 84.01 244 84L244 84zM255.1 163.9L210.1 117.1C188.4 96.28 157.6 86.4 127.3 91.44C81.55 99.07 48 138.7 48 185.1V190.9C48 219.1 59.71 246.1 80.34 265.3L256 429.3L431.7 265.3C452.3 246.1 464 219.1 464 190.9V185.1C464 138.7 430.4 99.07 384.7 91.44C354.4 86.4 323.6 96.28 301.9 117.1L255.1 163.9z">
+            </path>
+          </svg>
+          {{ like }}
+        </template>
       </div>
     </div>
   </div>
@@ -45,112 +61,36 @@
 import Vue from "vue";
 import { format } from "timeago.js";
 export default {
-  props: ["bbData", "name", "avatar", "fromColor"],
+  props: ["id", "bbData", "name", "avatar", "fromColor", "time", "label", "like", "liked"],
   data() {
     return {
       content: "",
       date: "",
-      from: "",
-      label: "",
+      from: ""
     };
   },
   computed: {
     time_title() {
-      return new Date(this.bbData.date).toLocaleString();
+      return new Date(parseInt(this.time) * 1000).toLocaleString();
     },
   },
   mounted() {
-    this.content = this.formatBody(this.bbData.content);
-    this.label = this.bbData.label ? `#${this.bbData.label}` : "";
-    this.from = this.bbData.from;
-    var date1 = this.bbData.date;
+    this.content = this.bbData;
+    var date1 = new Date(parseInt(this.time) * 1000);
     var date2 = new Date();
     var date3 = date2.getTime() - new Date(date1).getTime();
     var date4 = new Date(this.bbData.date).getTime() + 8 * 3600 * 1000;
-    var datetime = new Date(date4).toJSON();
+    var datetime = new Date(parseInt(this.time) * 1000).toJSON();
     datetime = datetime.substr(0, 10).replace("T", " ");
     if (date3 > 2678400000) {
       this.date = datetime;
     } else {
-      this.date = format(this.bbData.date, "zh_CN");
+      this.date = format(new Date(parseInt(this.time) * 1000), "zh_CN");      
     }
   },
   methods: {
-    formatBody: (body) => {
-      // 判断是否使用marked渲染
-      if (Vue.prototype.$marked) {
-        const marked = Vue.prototype.$marked;
-        const renderer = {
-          image(href, title, text) {
-            console.log(href);
-            return `<a href="${href}" target="_blank" data-fancybox="group" class="fancybox">
-           <img src="${href}" alt='${text}'>
-          </a>`;
-          },
-        };
-        marked.use({ renderer });
-        return marked(body, { breaks: true, gfm: true });
-      } else {
-        function urlToLink(str) {
-          // const qqWechatEmotionParser = require('qq-wechat-emotion-parser');
-          const re =
-            /\bhttps?:\/\/(?!\S+(?:jpe?g|png|bmp|gif|webp|gif|mp4))\S+/g;
-
-          // 匹配html标签发布的图片
-          const re_tagImg = /<img [^>]*src=['"]([^'"]+)[^>]*>/gm;
-          str = str.replace(re_tagImg, function (raw, url, text, uuu) {
-            return url;
-          });
-          // 处理markdown格式的图片
-          const re_mdImg = /!\[(.*?)\]\((.*?)\)/gm;
-          str = str.replace(re_mdImg, function (raw, text, url) {
-            return url;
-          });
-          // 替换所有图片链接为图片
-          //- QQ音乐和网易云音乐处理
-          const re_forpic =
-            /\bhttps?:[^:<>"]*\/([^:<>"]*)(\.(jpeg)|(png)|(jpg)|(webp))/g;
-          /* Safari上音乐id匹配的正则方法不支持，导致报错无法展示，暂时去掉音乐解析功能
-          const qq_music = /y\.qq\.com/g;
-          const netease_music = /music\.163\.com/g;
-        */
-          //  const music_url = /[a-zA-z]+:\/\/[^\s]*/g;
-          /*  
-          const music_type = /(&songmid=)|(song\?id=)|(songDetail)/g;
-          const music_id = /((?<=\?id=)(.*?)(?=&uct))|((?<=\&songmid=)(.*?)(?=&type))|((?<=\&id=)(.*?)(?=&ADTAG=))|((?<=playlist\?id=)(.*?)(?=&userid=))|(?<=playlist\/).*$|((?<=h5_playsong\&mid=)(.*?)(?=\&no_redirect))|((?<=songDetail\/)(.*?)(?=\?songtype=))/g;
-            if (music_type.test(str)) {
-                  var type = 'song';
-                } else {
-                  var type = 'playlist';
-                }
-            if (qq_music.test(str)) {
-              var server = 'tencent';
-              var music = str.match(music_id)
-              str = str.replace(music_url, function (url) {
-              return `<meting-js server="` + server + `" type="` + type + `" id="` + music + `"> </meting-js>`;
-              });
-            } else if (netease_music.test(str)) {
-              var server = 'netease';
-              var music = str.match(music_id)
-              str = str.replace(music_url, function (url) {
-              return `<meting-js server="` + server + `" type="` + type + `" id="` + music + `"> </meting-js>`;
-              });
-            } else {}
-        */
-          str = str.replace(re_forpic, function (url) {
-            return `<a href="${url}" target="_blank" data-fancybox="group" class="fancybox">
-            <img src="${url}" ></a>`;
-          });
-          str = str.replace(re, function (website) {
-            return `<a href='${website}' rel='noopener' target='_blank'>↘我是链接↙</a>`;
-          });
-          if (window.qqWechatEmotionParser) {
-            str = qqWechatEmotionParser(str);
-          }
-          return str;
-        }
-        return urlToLink(body);
-      }
+    handleLike(){
+      this.$emit("changeLike", this.id)
     },
   },
 };
@@ -191,20 +131,20 @@ export default {
   margin-left: 5px;
 }
 .xk-card .xk-card-header .xk-card-name .avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
+  width: 35px;
+  height: 35px;
   margin-right: 5px;
 }
 .xk-card .xk-card-header .xk-card-name .avatar-img {
   width: 100%;
   height: unset;
-  border-radius: 50%;
+  border-radius: 0.6em;
+  box-shadow: 0px 0px 3px 0px #00000066;
 }
 .name {
   font-weight: bold;
-  font-family: monospace;
-  text-shadow: 3px 2px 0px #4600f938;
+  font-family: serif;
+  text-shadow: 2px 1px 0px #4600f938;
 }
 
 .xk-card .xk-card-content {
@@ -214,6 +154,17 @@ export default {
   color: #0014ff;
   font-weight: bold;
   font-style: oblique;
+  font-size: 12px;
+  background-color: #2e93ff1a;
+  padding: 2px 6px;
+  border-radius: 0.4em;
+}
+.dao-like{
+    display: inline-flex;
+    align-items: center;
+}
+.like-svg{
+  cursor: pointer;
 }
 
 @media screen and (min-width: 768px) {
@@ -240,8 +191,8 @@ export default {
 .xk-card .xk-card-footer .xk-card-label {
   border-radius: 4px;
   padding: 0 5px;
-  font-weight: 550;
-  box-shadow: inset 0 -1px 0 rgb(27 31 35 / 12%);
+  font-weight: 600;
+  line-height: 24px;
   font-size: 14px;
   cursor: pointer;
   user-select: none;

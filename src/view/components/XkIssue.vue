@@ -2,15 +2,21 @@
   <div>
     <xk-info :count="total"></xk-info>
     <transition-group name="list" tag="div">
-      <template v-for="bb in bbList">
-        <xk-card
-          :bbData="bb"
-          :key="bb._id"
-          :name="name"
-          :avatar="avatar"
-          :fromColor="fromColor"
-        />
-      </template>
+        <template v-for="(bb, index) in bbList">
+          <xk-card
+            :bbData="bb.content"
+            :key="bb.id"
+            :id="bb.id"
+            :name="name"
+            :avatar="avatar"
+            :fromColor="fromColor"
+            :time="bb.time"
+            :label="bb.tags[0]"
+            :like="bb.like"
+            :liked="bb.liked"
+            @changeLike="handleChageLike($event, index)"
+          />
+        </template>
     </transition-group>
     <div class="loading" v-show="loading">
       <img :src="loadingImg" v-show="useLoadingImg" alt="loading" />
@@ -43,107 +49,91 @@
 <script>
 import Vue from "vue";
 import XkCard from "./XkCard.vue";
-import XkInfo from "./XkInfo.vue";
-// 内核
-import cloudbase from "@cloudbase/js-sdk/app";
-// 登录模块
-import "@cloudbase/js-sdk/auth";
-// 数据库模块
-import "@cloudbase/js-sdk/database";
 
 export default {
   components: { XkCard, XkInfo, XkInfo },
 
   data() {
     return {
-      envId: "",
-      region: "",
       name: "",
       avatar: "",
       bbList: [],
       total: 0,
-      message: "正在加载...",
+      message: "让叨叨飞一会~",
       loading: true,
       page: 1,
       limit: 5,
-      app: null,
       showMessage: false,
       fromColor: "",
       loadingImg:
         "https://blog-img-1258635493.cos.ap-chengdu.myqcloud.com/cdn/img/loader/dogloading.gif",
-      dbName: "talks",
       useLoadingImg: true,
+      execIng: false,
+      baseURL: "",
     };
   },
   methods: {
-    async login(app) {
-      const auth = app.auth({ persistence: "local" });
-      if (!auth.hasLoginState()) {
-        await auth.anonymousAuthProvider().signIn();
-        // 匿名登录成功检测登录状态isAnonymous字段为true
-        // const loginState = await auth.getLoginState();
-        // console.log(loginState);
-      }
-    },
-    // 获取总数量
-    async getCount() {
-      const db = await this.app.database();
-      const { total } = await db.collection(this.dbName).count();
-      this.total = total;
-    },
     async getData() {
-      this.loading = true;
-      this.showMessage = true;
-      const app = this.app;
-      const db = app.database();
-      try {
-        const { data } = await db
-          .collection("talks")
-          .limit(this.limit)
-          .skip((this.page - 1) * this.limit)
-          .orderBy("date", "desc")
-          .get();
+      this.loading = this.showMessage = true;
+      let res = await this.$http({
+        url: this.baseURL+'pub/talks/',
+        method: 'get',
+        params: {
+          page: this.page,
+          limit: this.limit
+        },
+      })
+      const {count = 0, data = [], status = false } = res.data
+      if(status){
+        this.total = count;
         this.bbList = this.bbList.concat(data);
-        this.loading = false;
-        this.showMessage = false;
-        this.page++;
-      } catch (e) {
-        console.log("e: ", e);
-        // this.loading = false;
-        // this.showMessage = true;
-        // this.message = e;
+        this.page += this.page;
+      }
+      this.loading = this.showMessage = false;
+      if(this.bbList.length === this.total){
+        this.message = "当你看到这段话的时候，就说明已经全部加载完了..."
+        this.showMessage = true;
       }
     },
+    async handleChageLike(id, idx){
+      if(!id || this.execIng) return;
+      if(this.bbList[idx].liked){
+        this.$toast.error("哈哈哈，点赞了就休想取消啦~");
+        return;
+      }else{
+        this.$toast.success("点赞成功，只不过有点慢，让点赞飞一会~");
+      }
+      this.execIng = true;
+      let res = await this.$http({
+        url: this.baseURL+'pub/like_talk/',
+        method: 'post',
+        data: `id=${id}`
+      })
+      const { status }  = res.data;
+      if(status){
+        this.bbList[idx].like = this.bbList[idx].liked ? this.bbList[idx].like-1: this.bbList[idx].like+1;
+        this.bbList[idx].liked = !this.bbList[idx].liked;
+      }
+      this.execIng = false;
+    }
   },
   async mounted() {
     const {
       name,
       avatar,
-      envId,
+      baseURL,
       limit = 5,
-      dbName = "talks",
-      region = "ap-shanghai",
       fromColor = "black",
       loadingImg = "https://blog-img-1258635493.cos.ap-chengdu.myqcloud.com/cdn/img/loader/dogloading.gif",
       useLoadingImg = true,
     } = Vue.prototype.$speakData;
     this.name = name;
-    this.envId = envId;
+    this.baseURL = baseURL.endsWith("/") ? baseURL : baseURL+"/";
     this.avatar = avatar;
+    this.useLoadingImg = useLoadingImg;
+    this.limit = limit;
     this.fromColor = fromColor;
-    this.region = region;
-    this.dbName = dbName;
-    this.limit = Number(limit);
-    this.loadingImg = loadingImg;
-    this.useLoadingImg = Boolean(useLoadingImg);
-    const app = cloudbase.init({
-      env: this.envId,
-      region: this.region,
-    });
-    this.app = app;
-    await this.login(this.app);
-    await this.getData();
-    await this.getCount();
+    this.getData();
   },
 };
 </script>
@@ -248,6 +238,7 @@ export default {
 }
 .loading {
   text-align: center;
+  padding: 20px;
 }
 @keyframes Gradient {
   0% {

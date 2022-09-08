@@ -5,7 +5,6 @@ const VueLoaderPlugin = require('vue-loader/lib/plugin')
 const ROOT_PATH = path.resolve(__dirname)
 const BUILD_PATH = path.resolve(ROOT_PATH, 'dist')
 const packageinfo = require('./package.json').version
-const TerserPlugin = require('terser-webpack-plugin')
 
 module.exports = {
   mode: 'production',
@@ -32,7 +31,7 @@ module.exports = {
   entry: {
     /* eslint-disable-next-line quote-props */
     'ispeak-bber-md': './src/js/main-md.js',
-    'ispeak-dao': './src/js/main.js'
+    'qexo-dao': './src/js/main.js'
   },
   output: {
     path: BUILD_PATH,
@@ -46,16 +45,7 @@ module.exports = {
     new CopyPlugin({
       patterns: [{ from: 'demo/', to: './' }]
     }),
-    new VueLoaderPlugin(),
-    new TerserPlugin({
-      parallel: 4,
-      terserOptions: {
-        ecma: 5,
-        toplevel: true,
-        ie8: true,
-        safari10: true
-      }
-    })
+    new VueLoaderPlugin()
   ],
   devServer: {
     static: [

@@ -12,6 +12,7 @@
             :fromColor="fromColor"
             :time="bb.time"
             :label="bb.tags[0]"
+            :from="bb.tags[1]"
             :like="bb.like"
             :liked="bb.liked"
             @changeLike="handleChageLike($event, index)"
@@ -49,9 +50,10 @@
 <script>
 import Vue from "vue";
 import XkCard from "./XkCard.vue";
+import XkInfo from "./XkInfo.vue"
 
 export default {
-  components: { XkCard, XkInfo, XkInfo },
+  components: { XkCard, XkInfo },
 
   data() {
     return {

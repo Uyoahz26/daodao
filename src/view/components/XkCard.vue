@@ -61,7 +61,7 @@
 import Vue from "vue";
 import { format } from "timeago.js";
 export default {
-  props: ["id", "bbData", "name", "avatar", "fromColor", "time", "label", "like", "liked"],
+  props: ["id", "bbData", "name", "avatar", "fromColor", "time", "label", "from", "like", "liked"],
   data() {
     return {
       content: "",
@@ -154,7 +154,7 @@ export default {
   color: #0014ff;
   font-weight: bold;
   font-style: oblique;
-  font-size: 12px;
+  font-size: 13px;
   background-color: #2e93ff1a;
   padding: 2px 6px;
   border-radius: 0.4em;

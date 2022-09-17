@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="padding-bottom: 40px;">
     <xk-info :count="total"></xk-info>
     <transition-group name="list" tag="div">
         <template v-for="(bb, index) in bbList">
@@ -39,9 +39,9 @@
         </div>
       </div>
     </div>
-    <button class="next" @click="getData" v-if="bbList.length < total">
-      再翻翻
-    </button>
+    <div class="push-btn" @click="getData" v-if="bbList.length < total && !loading">
+      <a>更早之前的</a>
+    </div>
     <div style="text-align: center; margin-top: 20px" v-if="showMessage">
       {{ message }}
     </div>
@@ -90,6 +90,10 @@ export default {
         this.total = count;
         this.bbList = this.bbList.concat(data);
         this.page += this.page;
+      }else{
+        this.message = "妈的，加载失败了，再刷新看看"
+        this.showMessage = true;
+        return;
       }
       this.loading = this.showMessage = false;
       if(this.bbList.length === this.total){
@@ -256,25 +260,96 @@ export default {
   }
 }
 
-button {
-  cursor: pointer;
-  color: #fff;
-  border: 0;
-  margin: 20px auto;
-  border-radius: 0.3125rem;
-  display: block;
-  padding: 0 1rem;
-  height: 40px;
-  font-weight: 500;
-  text-align: center;
-  transition: all 0.5s ease-out;
-  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-  background-size: 1000% 1000%;
-  animation: Gradient 50s linear infinite;
-  outline: 0;
-  box-shadow: 0 0px 5px 2px rgb(7 17 27 / 15%);
+.push-btn {
+  position: relative;
+  top: 30px;
+  width: 190px;
+  height: 45px;
+  margin: 0 auto;
 }
-button:hover {
-  box-shadow: 0 0px 8px 6px rgb(7 17 27 / 16%);
+.push-btn::before{
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translatex(-50%);
+  top: -4px;
+  width: 30px;
+  height: 10px;
+  background: #289fe4;
+  border-radius: 10px;
+  transition: 0.3s;
+  background: #2db2ff;
+  box-shadow: 0 0 5px #2db2ff, 0 0 0px #2db2ff, 0 0 6px #2db2ff, 0 0 15px #2db2ff;
+  transition-delay: 0.1s;
+}
+.push-btn:hover::before {
+    top: 0;
+    height: 50%;
+    width: 85%;
+    border-radius: 30px;
+}
+.push-btn::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    transform: translatex(-50%);
+    top: 40px;
+    width: 30px;
+    height: 10px;
+    border-radius: 10px;
+    transition: 0.3s;
+    transition-delay: 0.1s;
+    background: #2db2ff;
+    box-shadow: 0 0 5px #2db2ff, 0 0 15px #2db2ff, 0 0 30px #2db2ff, 0 0 60px #2db2ff;
+    background: #2db2ff;
+    box-shadow: 0 0 5px #2db2ff, 0 0 15px #2db2ff, 0 0 30px #2db2ff, 0 0 60px #2db2ff;
+}
+.push-btn:hover::after {
+    top: 25px;
+    height: 50%;
+    width: 85%;
+    border-radius: 30px;
+}
+.push-btn a{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgb(255 255 255 / 20%);
+  box-shadow: 0 3px 13px 0px rgb(0 0 0 / 30%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 10px;
+  letter-spacing: 1px;
+  text-decoration: none;
+  overflow: hidden;
+  color: #000;
+  font-weight: bold;
+  z-index: 1;
+  transition: 0.4s;
+  backdrop-filter: blur(25px);
+}
+.push-btn:hover a {
+    letter-spacing: 3px !important;
+}
+.push-btn a::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(to left, rgb(213 238 252 / 49%), #ffffff00);
+    transform: skewX(59deg) translate(0);
+    transition: 0.3s;
+    filter: blur(0px);
+}
+.push-btn:hover a::before {
+    transform: skewX(43deg) translate(200px);
 }
 </style>

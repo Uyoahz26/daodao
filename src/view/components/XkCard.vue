@@ -1,11 +1,3 @@
-<!--
- * @description: 卡片
- * @author: 小康
- * @url: https://xiaokang.me
- * @Date: 2021-03-19 09:17:45
- * @LastEditTime: 2022-08-05 11:09:08
- * @LastEditors: George.zhao
--->
 <template>
   <div class="xk-card wow animate__zoomIn">
     <div class="xk-card-header">
@@ -13,18 +5,12 @@
         <div class="avatar">
           <img :src="avatar" class="avatar-img" />
         </div>
-        <div class="name">{{ name }}</div>
-        <svg
-          class="is-badge"
-          viewBox="0 0 512 512"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="m512 268c0 17.9-4.3 34.5-12.9 49.7s-20.1 27.1-34.6 35.4c.4 2.7.6 6.9.6 12.6 0 27.1-9.1 50.1-27.1 69.1-18.1 19.1-39.9 28.6-65.4 28.6-11.4 0-22.3-2.1-32.6-6.3-8 16.4-19.5 29.6-34.6 39.7-15 10.2-31.5 15.2-49.4 15.2-18.3 0-34.9-4.9-49.7-14.9-14.9-9.9-26.3-23.2-34.3-40-10.3 4.2-21.1 6.3-32.6 6.3-25.5 0-47.4-9.5-65.7-28.6-18.3-19-27.4-42.1-27.4-69.1 0-3 .4-7.2 1.1-12.6-14.5-8.4-26-20.2-34.6-35.4-8.5-15.2-12.8-31.8-12.8-49.7 0-19 4.8-36.5 14.3-52.3s22.3-27.5 38.3-35.1c-4.2-11.4-6.3-22.9-6.3-34.3 0-27 9.1-50.1 27.4-69.1s40.2-28.6 65.7-28.6c11.4 0 22.3 2.1 32.6 6.3 8-16.4 19.5-29.6 34.6-39.7 15-10.1 31.5-15.2 49.4-15.2s34.4 5.1 49.4 15.1c15 10.1 26.6 23.3 34.6 39.7 10.3-4.2 21.1-6.3 32.6-6.3 25.5 0 47.3 9.5 65.4 28.6s27.1 42.1 27.1 69.1c0 12.6-1.9 24-5.7 34.3 16 7.6 28.8 19.3 38.3 35.1 9.5 15.9 14.3 33.4 14.3 52.4zm-266.9 77.1 105.7-158.3c2.7-4.2 3.5-8.8 2.6-13.7-1-4.9-3.5-8.8-7.7-11.4-4.2-2.7-8.8-3.6-13.7-2.9-5 .8-9 3.2-12 7.4l-93.1 140-42.9-42.8c-3.8-3.8-8.2-5.6-13.1-5.4-5 .2-9.3 2-13.1 5.4-3.4 3.4-5.1 7.7-5.1 12.9 0 5.1 1.7 9.4 5.1 12.9l58.9 58.9 2.9 2.3c3.4 2.3 6.9 3.4 10.3 3.4 6.7-.1 11.8-2.9 15.2-8.7z"
-            fill="#2708ff"
-          ></path>
-        </svg>
-        <span class="xk-card-time" :title="time_title">{{ date }}</span>
+        <div>
+          <div class="name">{{ name }}</div>
+          <span class="xk-card-time" :title="time_title">{{ date }}</span>
+        </div>
+        
+        
       </div>
       <div class="dao-label" v-if="label">
         #{{ label }}
@@ -36,7 +22,7 @@
         :style="'background: ' + fromColor + ';color:' + 'white'"
         class="xk-card-label"
       >
-        {{ from || "Chrome牛逼器" }}
+       <span>{{ from || "Chrome牛逼器" }}</span> 
       </div>
       <div class="dao-like">
 
@@ -66,7 +52,6 @@ export default {
     return {
       content: "",
       date: "",
-      from: ""
     };
   },
   computed: {
@@ -75,7 +60,7 @@ export default {
     },
   },
   mounted() {
-    this.content = this.bbData;
+    this.content = this.bbData.replace(/^<p><br><\/p>*|<p><br><\/p>*$/g, "");
     var date1 = new Date(parseInt(this.time) * 1000);
     var date2 = new Date();
     var date3 = date2.getTime() - new Date(date1).getTime();
@@ -96,6 +81,12 @@ export default {
 };
 </script>
 <style scoped>
+@font-face {
+    font-family: "ZhuZiAWan";
+    src: url('https://blog-img-1258635493.cos.ap-chengdu.myqcloud.com/cdn/fonts/ZhuZiAWan.ttf');
+    font-weight: unset;
+    font-style: normal;
+}
 .xk-card {
   padding: 10px 20px;
   border-radius: 10px;
@@ -104,16 +95,18 @@ export default {
   overflow: hidden;
   margin-top: 20px;
   user-select: none;
+  position: relative;
+  transition: all 0.15s ease-in-out;
 }
 .xk-card:hover {
   box-shadow: 0 5px 10px 8px rgba(7, 17, 27, 0.16);
-  transition: all 0.15s ease-in-out;
+  transform: scale(1.015);
 }
 .xk-card .xk-card-time {
   font-size: 12px;
-  text-shadow: #d9d9d9 0 0 1px, #fffffb 0 0 1px, #fffffb 0 0 2px;
-  margin-left: 10px;
-  font-weight: 700;
+  /* text-shadow: #d9d9d9 0 0 1px, #fffffb 0 0 1px, #fffffb 0 0 2px; */
+  /* margin-left: 10px; */
+  font-weight: 400;
   font-style: oblique;
 }
 .xk-card .xk-card-header {
@@ -131,9 +124,9 @@ export default {
   margin-left: 5px;
 }
 .xk-card .xk-card-header .xk-card-name .avatar {
-  width: 35px;
-  height: 35px;
-  margin-right: 5px;
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
 }
 .xk-card .xk-card-header .xk-card-name .avatar-img {
   width: 100%;
@@ -143,12 +136,14 @@ export default {
 }
 .name {
   font-weight: bold;
-  font-family: serif;
-  text-shadow: 2px 1px 0px #4600f938;
+  transition: letter-spacing .2s ease;
 }
 
 .xk-card .xk-card-content {
   padding: 0.8rem 0;
+}
+.xk-card-content > div > iframe{
+  width: 100% !important;
 }
 .dao-label {
   color: #0014ff;
@@ -197,5 +192,26 @@ export default {
   cursor: pointer;
   user-select: none;
   margin-right: 10px;
+}
+.xk-card-header::before {
+    content: ' ';
+    width: 4.5px;
+    height: 30px;
+    background-color: #000a85;
+    position: absolute;
+    left: 0px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    transition: height .2s ease;
+  }
+.xk-card-label > span::before{
+  content: ' ';
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAABmJLR0QA/wD/AP+gvaeTAAAEvElEQVR4nO2aT2zbVBzHP892kiZuGK2hYUXTVqRqVO0FDkyCE5uGEEi7TOJSisQBxoEJ0MR2GxO7ICHQJv6IjQPSChdOlD8TQmxHxMSBSyc2/mxllHTtllRakrZpbD8OadPW6dYkfrEbls+pec9+/n2+9rMT90GbNm3atGnT5m5FHDv2ZTR5M38cxAiwNeyCAiKNYDRnmUeNZKbwNojDYVcUML1IjiQzBQwkIwADz+6is6cr7MICITc9y6WzF0AyogG9wF0jD5BMVVx7DW/nb99dID8zG2xFikimunj4mV3A+h6r+5epBKCnLABELNLsOptGLB6lr/8BAK4mouQ9/UbHSv8vy23eQQaH9zazxpowhKDH1DE0saY9O++QL7mVz4mIhhXXEZ79HQkDw3spObLS1h3X6YxoVceqbgkZFfIzc3ZN8rDJAghaHjZRAH7kTc1pSB4UBrDDlBtvdBv8yCc0hy7DprBYvzwoCsCKQW9cYsXq39eP/BbdptuwARhIOvTEygHUKg8KArBi0GeWC+0z3bpC8Dvns7ZBer7c+mdOMFMUdcnDOo/BethhSnrjK5ddVIOdSZe0IZgoeMv1HFjRDc92BFLCjQbkwWcAEwVBzhb0mS5RDRZduFrQyBQ3OKjiu/3fc43Jg4IpkCmWpQGuhCAP9c35qnoa2stDpghpQ5BtMXlQ+BgMas6rlAdFV8BG6EKQ6tTRxVqtzLxDYZW8uSTvxZUwXbCx3RV5K65j+pSHAAJYPvNe+axHPhHR6F5HvnK3d9eeeT/yswtO5e+mfhXejJf97IJDbnHl2E0LoBXkoUkBtIo8NCGAVpIHxQG0mjwoDKAV5UFRAH7khQhPHhQE4EsesIwSt4rhyIPPAPxe9p2aTYdw2R530Zc6g5QHH98EVcz533OwNSaYnBe4Mnh5aDAAlTe8a3Pl3jDkoYEp0Kp3+9tR11H/b/JQRwCbQf6+Ux9hnf648nl2weH4P19xcvqbNduNXZph7PJMTWNW7gE/v/NFzYUExT2pe3nq4D40rRxS5NpEpW/5zF8tTlftdz1f/Wrq4ugP5P69UdUeyAuRRnFLLpnrWYQoB7C8fufmVBaAxKptE4Vc1f6r23S5/jSpBLD74D6f5Tafua3b8M6tfuN+PO9aeDBhVE3BR/c/sebz+Q++Bjb5FeDlr/3PV7Ud3rKnqu257Z01j1kJIJdfbLCs1kYD0lBeOHS3kF9xTRsIRpEcuXT2Qpg1hYKAM0bOMo8mMwWWlsv1hl1UQKQRjN6yzLfu/N8Mhbz36mcSwNo9dMftMufHATj04YuB1LZpVoiERTuAsAsIG+Xz7NTLpxL5aPSQlAwLwUOA35WXJSm5omnyc7NYev/A6QNzKupcRmkA775ypkcz7O9BPKJy3BXkr65tPP3mJy/U9lOvBpQFcOK1T1OOY5wDBiOJqNs1uE3rsDoRur9ZJh2XhUye7PiktOeLArio6/ae10++VP0zsAGUBFA+8+45kEORRKyYerw/pitec+wu2kz99EfRLizEpOSyHjGefOPEyJTfcZX8GNIizrdIhgBKc8XY5I/jKoZdjxiAEOx0HXsMeMzvgGqeAq70LsxuOkJS/QKgTZs2berkP82M1TLgT8x4AAAAAElFTkSuQmCC');
+}
+.xk-card:hover .xk-card-header::before{
+  height: 45px;
+}
+.xk-card:hover .xk-card-header .name{
+  letter-spacing: 1px;
 }
 </style>

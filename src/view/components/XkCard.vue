@@ -88,7 +88,7 @@ export default {
     font-style: normal;
 }
 .xk-card {
-  padding: 10px 20px;
+  padding: 15px 20px 2px;
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.1);
   box-shadow: 0 0px 14px 2px rgb(7 17 27 / 6%);

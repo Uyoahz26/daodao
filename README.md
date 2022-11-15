@@ -27,26 +27,27 @@
 
 例：
 
-```js
-;<script
+```html
+<script
   type="text/javascript"
   src="//cdn.jsdelivr.net/gh/Uyoahz26/daodao@main/dist/qexo-dao.min.js"
   charset="utf-8"
 ></script>
-
-qexoDaodao
-  ?.init({
-    el: "#qexo",
-    avatar: "https://q1.qlogo.cn/g?b=qq&nk=2496091142&s=640",
-    name: "UyoAhz",
-    limit: 10,
-    fromColor: "#000000",
-    useLoadingImg: false,
-    baseURL: "https://qexo访问地址/",
-  })
-  .then(function () {
-    console.log("daodao加载成功")
-  })
+<script>
+  qexoDaodao
+    ?.init({
+      el: "#qexo",
+      avatar: "https://q1.qlogo.cn/g?b=qq&nk=2496091142&s=640",
+      name: "UyoAhz",
+      limit: 10,
+      fromColor: "#000000",
+      useLoadingImg: false,
+      baseURL: "https://qexo访问地址/",
+    })
+    .then(function () {
+      console.log("daodao加载成功")
+    })
+</script>
 ```
 
 ---

@@ -142,7 +142,7 @@ export default {
       baseURL,
       limit = 5,
       fromColor = "black",
-      labelColor = "#ff0000",
+      labelColor = "#000a85",
       loadingImg = "https://blog-img-1258635493.cos.ap-chengdu.myqcloud.com/cdn/img/loader/dogloading.gif",
       useLoadingImg = true,
     } = Vue.prototype.$speakData;

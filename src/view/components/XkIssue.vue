@@ -1,23 +1,24 @@
 <template>
-  <div style="padding-bottom: 40px;">
-    <xk-info :count="total"></xk-info>
+  <div style="padding-bottom: 40px">
+    <xk-info :count="total" :title="title"></xk-info>
     <transition-group name="list" tag="div">
-        <template v-for="(bb, index) in bbList">
-          <xk-card
-            :bbData="bb.content"
-            :key="bb.id"
-            :id="bb.id"
-            :name="name"
-            :avatar="avatar"
-            :fromColor="fromColor"
-            :time="bb.time"
-            :label="bb.tags[0]"
-            :from="bb.tags[1]"
-            :like="bb.like"
-            :liked="bb.liked"
-            @changeLike="handleChageLike($event, index)"
-          />
-        </template>
+      <template v-for="(bb, index) in bbList">
+        <xk-card
+          :bbData="bb.content"
+          :key="bb.id"
+          :id="bb.id"
+          :name="name"
+          :avatar="avatar"
+          :fromColor="fromColor"
+          :time="bb.time"
+          :label="bb.tags[0]"
+          :from="bb.tags[1]"
+          :like="bb.like"
+          :liked="bb.liked"
+          :labelColor="labelColor"
+          @changeLike="handleChageLike($event, index)"
+        />
+      </template>
     </transition-group>
     <div class="loading" v-show="loading">
       <img :src="loadingImg" v-show="useLoadingImg" alt="loading" />
@@ -39,24 +40,31 @@
         </div>
       </div>
     </div>
-    <div class="push-btn" @click="getData" v-if="bbList.length < total && !loading">
+    <div
+      class="push-btn"
+      @click="getData"
+      v-if="bbList.length < total && !loading"
+    >
       <a>更早之前的</a>
     </div>
     <div style="text-align: center; margin-top: 20px" v-if="showMessage">
       {{ message }}
     </div>
+    <xk-footer></xk-footer>
   </div>
 </template>
 <script>
 import Vue from "vue";
 import XkCard from "./XkCard.vue";
-import XkInfo from "./XkInfo.vue"
+import XkInfo from "./XkInfo.vue";
+import XkFooter from "./XkFooter.vue";
 
 export default {
-  components: { XkCard, XkInfo },
+  components: { XkCard, XkInfo, XkFooter },
 
   data() {
     return {
+      title: "",
       name: "",
       avatar: "",
       bbList: [],
@@ -67,6 +75,7 @@ export default {
       limit: 5,
       showMessage: false,
       fromColor: "",
+      labelColor: "",
       loadingImg:
         "https://blog-img-1258635493.cos.ap-chengdu.myqcloud.com/cdn/img/loader/dogloading.gif",
       useLoadingImg: true,
@@ -78,67 +87,75 @@ export default {
     async getData() {
       this.loading = this.showMessage = true;
       let res = await this.$http({
-        url: this.baseURL+'pub/talks/',
-        method: 'get',
+        url: this.baseURL + "pub/talks/",
+        method: "get",
         params: {
           page: this.page,
-          limit: this.limit
+          limit: this.limit,
         },
-      })
-      const {count = 0, data = [], status = false } = res.data
-      if(status){
+      });
+      const { count = 0, data = [], status = false } = res.data;
+      if (status) {
         this.total = count;
         this.bbList = this.bbList.concat(data);
-        this.page += this.page;
-      }else{
-        this.message = "妈的，加载失败了，再刷新看看"
+        this.page += 1;
+      } else {
+        this.message = "妈的，加载失败了，再刷新看看";
         this.showMessage = true;
         return;
       }
       this.loading = this.showMessage = false;
-      if(this.bbList.length === this.total){
-        this.message = "当你看到这段话的时候，就说明已经全部加载完了..."
+      if (this.bbList.length === this.total) {
+        this.message = "当你看到这段话的时候，就说明已经全部加载完了...";
         this.showMessage = true;
       }
     },
-    async handleChageLike(id, idx){
-      if(!id || this.execIng) return;
-      if(this.bbList[idx].liked){
+    async handleChageLike(id, idx) {
+      if (!id || this.execIng) return;
+      if (this.bbList[idx].liked) {
         this.$toast.error("哈哈哈，点赞了就休想取消啦~");
         return;
-      }else{
+      } else {
         this.$toast.success("点赞成功，只不过有点慢，让点赞飞一会~");
       }
       this.execIng = true;
       let res = await this.$http({
-        url: this.baseURL+'pub/like_talk/',
-        method: 'post',
-        data: `id=${id}`
-      })
-      const { status }  = res.data;
-      if(status){
-        this.bbList[idx].like = this.bbList[idx].liked ? this.bbList[idx].like-1: this.bbList[idx].like+1;
+        url: this.baseURL + "pub/like_talk/",
+        method: "post",
+        data: `id=${id}`,
+      });
+      const { status } = res.data;
+      if (status) {
+        this.bbList[idx].like = this.bbList[idx].liked
+          ? this.bbList[idx].like - 1
+          : this.bbList[idx].like + 1;
         this.bbList[idx].liked = !this.bbList[idx].liked;
       }
       this.execIng = false;
-    }
+    },
   },
   async mounted() {
     const {
+      title = "叨叨",
       name,
       avatar,
       baseURL,
       limit = 5,
       fromColor = "black",
+      labelColor = "#ff0000",
       loadingImg = "https://blog-img-1258635493.cos.ap-chengdu.myqcloud.com/cdn/img/loader/dogloading.gif",
       useLoadingImg = true,
     } = Vue.prototype.$speakData;
+    this.title = title;
     this.name = name;
-    this.baseURL = baseURL.endsWith("/") ? baseURL : baseURL+"/";
+    this.baseURL = baseURL.endsWith("/") ? baseURL : baseURL + "/";
     this.avatar = avatar;
     this.useLoadingImg = useLoadingImg;
+    console.log("useLoadingImg: ", useLoadingImg);
+    console.log("useLoadingImg: ", typeof useLoadingImg);
     this.limit = limit;
     this.fromColor = fromColor;
+    this.labelColor = labelColor;
     this.getData();
   },
 };
@@ -266,8 +283,9 @@ export default {
   width: 190px;
   height: 45px;
   margin: 0 auto;
+  margin-bottom: 2.8rem;
 }
-.push-btn::before{
+.push-btn::before {
   content: "";
   position: absolute;
   left: 50%;
@@ -279,38 +297,41 @@ export default {
   border-radius: 10px;
   transition: 0.3s;
   background: #2db2ff;
-  box-shadow: 0 0 5px #2db2ff, 0 0 0px #2db2ff, 0 0 6px #2db2ff, 0 0 15px #2db2ff;
+  box-shadow: 0 0 5px #2db2ff, 0 0 0px #2db2ff, 0 0 6px #2db2ff,
+    0 0 15px #2db2ff;
   transition-delay: 0.1s;
 }
 .push-btn:hover::before {
-    top: 0;
-    height: 50%;
-    width: 85%;
-    border-radius: 30px;
+  top: 0;
+  height: 50%;
+  width: 85%;
+  border-radius: 30px;
 }
 .push-btn::after {
-    content: "";
-    position: absolute;
-    left: 50%;
-    transform: translatex(-50%);
-    top: 40px;
-    width: 30px;
-    height: 10px;
-    border-radius: 10px;
-    transition: 0.3s;
-    transition-delay: 0.1s;
-    background: #2db2ff;
-    box-shadow: 0 0 5px #2db2ff, 0 0 15px #2db2ff, 0 0 30px #2db2ff, 0 0 60px #2db2ff;
-    background: #2db2ff;
-    box-shadow: 0 0 5px #2db2ff, 0 0 15px #2db2ff, 0 0 30px #2db2ff, 0 0 60px #2db2ff;
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translatex(-50%);
+  top: 40px;
+  width: 30px;
+  height: 10px;
+  border-radius: 10px;
+  transition: 0.3s;
+  transition-delay: 0.1s;
+  background: #2db2ff;
+  box-shadow: 0 0 5px #2db2ff, 0 0 15px #2db2ff, 0 0 30px #2db2ff,
+    0 0 60px #2db2ff;
+  background: #2db2ff;
+  box-shadow: 0 0 5px #2db2ff, 0 0 15px #2db2ff, 0 0 30px #2db2ff,
+    0 0 60px #2db2ff;
 }
 .push-btn:hover::after {
-    top: 25px;
-    height: 50%;
-    width: 85%;
-    border-radius: 30px;
+  top: 25px;
+  height: 50%;
+  width: 85%;
+  border-radius: 30px;
 }
-.push-btn a{
+.push-btn a {
   position: absolute;
   top: 0;
   left: 0;
@@ -335,21 +356,21 @@ export default {
   backdrop-filter: blur(25px);
 }
 .push-btn:hover a {
-    letter-spacing: 3px !important;
+  letter-spacing: 3px !important;
 }
 .push-btn a::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 50%;
-    height: 100%;
-    background: linear-gradient(to left, rgb(213 238 252 / 49%), #ffffff00);
-    transform: skewX(59deg) translate(0);
-    transition: 0.3s;
-    filter: blur(0px);
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(to left, rgb(213 238 252 / 49%), #ffffff00);
+  transform: skewX(59deg) translate(0);
+  transition: 0.3s;
+  filter: blur(0px);
 }
 .push-btn:hover a::before {
-    transform: skewX(43deg) translate(200px);
+  transform: skewX(43deg) translate(200px);
 }
 </style>

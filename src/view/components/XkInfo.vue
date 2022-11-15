@@ -2,7 +2,7 @@
   <div class="xk-info">
     <div class="count">
       <i class="iconfont icon-pinlun"></i>
-      叨叨 「<span style="font-size: 26px">{{ count }}</span
+      {{ title }} 「<span style="font-size: 26px">{{ count }}</span
       >」
     </div>
   </div>
@@ -10,7 +10,7 @@
 
 <script>
 export default {
-  props: ["count"],
+  props: ["count", "title"],
 };
 </script>
 

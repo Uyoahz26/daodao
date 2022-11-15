@@ -1,25 +1,22 @@
 <template>
   <div class="xk-footer">
     Powered by
-    <a href="https://github.com/kuole-o/bber-ispeak" target="_blank">{{
-      name
-    }}</a>
+    <a :href="warehouse" target="_blank">{{ name }}</a>
     v{{ version }}
   </div>
 </template>
 
 <script>
-import { version, name } from "../../../package.json";
+import { version, name, warehouse } from "../../../package.json";
 
 export default {
   data() {
     return {
       version,
       name,
+      warehouse,
     };
   },
-  methods: {},
-  mounted() {},
 };
 </script>
 

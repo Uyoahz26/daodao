@@ -2,24 +2,23 @@ import axios from "axios";
 
 //创建axios实例
 const service = axios.create({
-    // baseURL: 'https://admin.uyoahz.cn/',
     timeout: 10000,
 });
 
 //请求拦截器
 service.interceptors.request.use(
-    (config)=>{
+    (config) => {
         return config;
-    },(error) => {
+    }, (error) => {
         return Promise.reject(error);
     }
 )
 
 //响应拦截器
 service.interceptors.response.use(
-    (response)=>{
+    (response) => {
         return response;
-    },(error)=>{
+    }, (error) => {
         return Promise.reject(error);
     }
 )

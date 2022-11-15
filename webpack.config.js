@@ -30,13 +30,12 @@ module.exports = {
   },
   entry: {
     /* eslint-disable-next-line quote-props */
-    'ispeak-bber-md': './src/js/main-md.js',
     'qexo-dao': './src/js/main.js'
   },
   output: {
     path: BUILD_PATH,
     filename: '[name].min.js',
-    library: 'ispeakBber',
+    library: 'qexoDaodao',
     libraryTarget: 'umd'
   },
   target: ['web', 'es5'],

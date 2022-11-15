@@ -151,8 +151,6 @@ export default {
     this.baseURL = baseURL.endsWith("/") ? baseURL : baseURL + "/";
     this.avatar = avatar;
     this.useLoadingImg = useLoadingImg;
-    console.log("useLoadingImg: ", useLoadingImg);
-    console.log("useLoadingImg: ", typeof useLoadingImg);
     this.limit = limit;
     this.fromColor = fromColor;
     this.labelColor = labelColor;

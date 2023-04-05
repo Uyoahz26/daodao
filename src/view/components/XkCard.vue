@@ -61,9 +61,11 @@
   </div>
 </template>
 <script>
-import Vue from "vue";
-import "../tools/view-image.min.js";
-import { format } from "timeago.js";
+import Vue from "vue"
+import "../tools/view-image.min.js"
+import { format as relative } from "timeago.js"
+import { format } from "date-fns"
+
 export default {
   props: [
     "id",
@@ -77,39 +79,45 @@ export default {
     "like",
     "liked",
     "labelColor",
+    "format",
   ],
   data() {
     return {
       content: "",
       date: "",
-    };
+    }
   },
   computed: {
     time_title() {
-      return new Date(parseInt(this.time) * 1000).toLocaleString();
+      return new Date(parseInt(this.time) * 1000).toLocaleString()
     },
   },
   mounted() {
-    this.content = this.bbData.replace(/^<p><br><\/p>*|<p><br><\/p>*$/g, "");
-    var date1 = new Date(parseInt(this.time) * 1000);
-    var date2 = new Date();
-    var date3 = date2.getTime() - new Date(date1).getTime();
-    var date4 = new Date(this.bbData.date).getTime() + 8 * 3600 * 1000;
-    var datetime = new Date(parseInt(this.time) * 1000).toJSON();
-    datetime = datetime.substr(0, 10).replace("T", " ");
-    if (date3 > 2678400000) {
-      this.date = datetime;
+    this.content = this.bbData.replace(/^<p><br><\/p>*|<p><br><\/p>*$/g, "")
+    if (!this.format?.trim().length) {
+      let date1 = new Date(parseInt(this.time) * 1000)
+      let date2 = new Date()
+      let date3 = date2.getTime() - new Date(date1).getTime()
+      let date4 = new Date(this.bbData.date).getTime() + 8 * 3600 * 1000
+      let datetime = new Date(parseInt(this.time) * 1000).toJSON()
+      datetime = datetime.substr(0, 10).replace("T", " ")
+      if (date3 > 2678400000) {
+        this.date = datetime
+      } else {
+        this.date = relative(new Date(parseInt(this.time) * 1000), "zh_CN")
+      }
     } else {
-      this.date = format(new Date(parseInt(this.time) * 1000), "zh_CN");
+      this.date = format(Number(this.time.padEnd(13, 0)), this.format)
     }
-    window.ViewImage && ViewImage.init(".xk-card-content img");
+
+    window.ViewImage && ViewImage.init(".xk-card-content img")
   },
   methods: {
     handleLike() {
-      this.$emit("changeLike", this.id);
+      this.$emit("changeLike", this.id)
     },
   },
-};
+}
 </script>
 <style scoped>
 .xk-card {

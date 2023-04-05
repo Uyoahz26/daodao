@@ -1,12 +1,13 @@
 {
   "name": "qexo-daodao",
-  "version": "0.0.1",
+  "version": "1.0.2",
   "warehouse": "https://github.com/Uyoahz26/daodao",
   "description": "基于Qexo的叨叨展示",
   "main": "dist/qexo-daodao.min.js",
   "dependencies": {
     "@cloudbase/js-sdk": "^1.4.1",
     "axios": "^0.21.4",
+    "date-fns": "^2.29.3",
     "marked": "^2.0.0",
     "timeago.js": "^4.0.2",
     "vue": "^2.6.12",

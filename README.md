@@ -25,6 +25,8 @@
 
 `loadingImg`：加载 gif 图，useLoadingImg 为 true 时必填
 
+`format`：自定义日期显示格式，如`yyyy年MM月dd日`
+
 例：
 
 ```html
@@ -43,12 +45,14 @@
       fromColor: "#000000",
       useLoadingImg: false,
       baseURL: "https://qexo访问地址/",
+      format: "yyyy年MM月dd日"
     })
     .then(function () {
       console.log("daodao加载成功")
     })
 </script>
 ```
+
 
 ---
 
